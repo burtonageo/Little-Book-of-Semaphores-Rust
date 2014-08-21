@@ -1,0 +1,9 @@
+[package]
+
+name = "little-book-of-semaphores-3-1-signalling"
+version = "0.1.0"
+authors = ["burtonageo@gmail.com"]
+
+[[bin]]
+
+name = "signaling"

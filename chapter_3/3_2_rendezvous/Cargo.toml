@@ -1,0 +1,9 @@
+[package]
+
+name = "little-book-of-semaphores-3-2-rendezvous"
+version = "0.1.0"
+authors = ["burtonageo@gmail.com"]
+
+[[bin]]
+
+name = "rendezvous"

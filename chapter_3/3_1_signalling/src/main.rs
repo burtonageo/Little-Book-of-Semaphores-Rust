@@ -1,5 +1,7 @@
 use std::sync::{Arc, Semaphore};
+use std::thread::Thread;
 
+#[allow(unstable)]
 fn main() {
 
     // Raw semaphores aren't shareable in
@@ -8,9 +10,9 @@ fn main() {
     let sem = Arc::new(Semaphore::new(0));
 
     // Pointers must be cloned before they can
-    // be used in a Proc because they are moved
+    // be used in a Thread because they are moved
     let sb = sem.clone();
-    spawn(proc(){
+    let _ta = Thread::scoped(move ||{
 
         // The semaphore will be -1, and can this proc
         // can only continue once "Task A" has
@@ -21,11 +23,13 @@ fn main() {
     });
 
     let sa = sem.clone();
-    spawn(proc(){
+    let _tb = Thread::scoped(move ||{
         println!("Task A");
 
         // "Task B" can now be printed, as the semaphore
         // value is now 0
         sa.release();
     });
+
+    
 }

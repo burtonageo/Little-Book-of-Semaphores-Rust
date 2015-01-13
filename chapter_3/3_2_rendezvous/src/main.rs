@@ -16,30 +16,29 @@ fn main() {
     // We use 2 semaphores here: sem_a to signal that
     // statement_a2 can safely run, and sem_b to signal
     // that statement_b2 can safely run
-    let sem_a = Arc::new(Semaphore::new(0));
-    let sem_b = Arc::new(Semaphore::new(0));
+    let (sem_a, sem_b) = (Arc::new(Semaphore::new(0)),
+                          Arc::new(Semaphore::new(0)));
 
-    let s_a1 = sem_a.clone();
-    let _ = Thread::scoped(move ||{
-        statement_a1();
-        s_a1.release();
-    });
+    let (s_a1, s_a2) = (sem_a.clone(), sem_a.clone());
+    let (s_b1, s_b2) = (sem_b.clone(), sem_b.clone());
 
-    let s_b2 = sem_b.clone();
-    let _t = Thread::scoped(move ||{
+    let _t0 = Thread::scoped(move || {
         s_b2.acquire();
         statement_a2();
     });
 
-    let s_b1 = sem_b.clone();
-    let _ = Thread::scoped(move ||{
-        statement_b1();
-        s_b1.release();
-    });
-
-    let s_a2 = sem_a.clone();
-    let _ = Thread::scoped(move ||{
+    let _t1 = Thread::scoped(move || {
         s_a2.acquire();
         statement_b2();
+    });
+
+    let _t2 = Thread::scoped(move || {
+        statement_a1();
+        s_a1.release();
+    });
+
+    let _t3 = Thread::scoped(move || {
+        statement_b1();
+        s_b1.release();
     });
 }
